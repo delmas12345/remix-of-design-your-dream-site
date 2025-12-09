@@ -5,8 +5,9 @@ import { RadioGroup } from "./RadioGroup";
 import { TextInput } from "./TextInput";
 import { TextArea } from "./TextArea";
 import { ColorPicker } from "./ColorPicker";
-import { Send, FileText } from "lucide-react";
+import { Send, FileText, Loader2, CheckCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const websitePurposeOptions = [
   { id: "business", label: "Business Website" },
@@ -101,6 +102,8 @@ const budgetOptions = [
 ];
 
 export const DesignOptionsForm = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     businessName: "",
@@ -131,14 +134,108 @@ export const DesignOptionsForm = () => {
     signatureDate: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    toast({
-      title: "Form Submitted Successfully!",
-      description: "We'll review your project specifications and get back to you soon.",
-    });
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase.from("form_submissions").insert({
+        full_name: formData.fullName,
+        business_name: formData.businessName || null,
+        email: formData.email,
+        phone: formData.phone || null,
+        website_purpose: formData.websitePurpose,
+        other_purpose: formData.otherPurpose || null,
+        page_count: formData.pageCount || null,
+        main_pages: formData.mainPages || null,
+        design_style: formData.designStyle,
+        other_style: formData.otherStyle || null,
+        layout: formData.layout || null,
+        main_color: formData.mainColor,
+        secondary_color: formData.secondaryColor,
+        accent_color: formData.accentColor,
+        use_designer_colors: formData.useDesignerColors,
+        typography: formData.typography || null,
+        custom_typography: formData.customTypography || null,
+        features: formData.features,
+        other_features: formData.otherFeatures || null,
+        content_provider: formData.contentProvider || null,
+        media_provided: formData.mediaProvided,
+        deadline: formData.deadline || null,
+        launch_date: formData.launchDate || null,
+        budget: formData.budget || null,
+        additional_notes: formData.additionalNotes || null,
+        signature: formData.signature,
+        signature_date: formData.signatureDate,
+      });
+
+      if (error) throw error;
+
+      setIsSubmitted(true);
+      toast({
+        title: "Form Submitted Successfully!",
+        description: "We'll review your project specifications and get back to you soon.",
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Submission Error",
+        description: "There was an error submitting your form. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  if (isSubmitted) {
+    return (
+      <div className="section-card text-center py-16">
+        <CheckCircle className="w-20 h-20 text-accent mx-auto mb-6" />
+        <h2 className="text-3xl font-bold text-foreground mb-4">Thank You!</h2>
+        <p className="text-muted-foreground text-lg max-w-md mx-auto">
+          Your project specifications have been submitted successfully. We'll review your requirements and get back to you within 24-48 hours.
+        </p>
+        <button
+          onClick={() => {
+            setIsSubmitted(false);
+            setFormData({
+              fullName: "",
+              businessName: "",
+              email: "",
+              phone: "",
+              websitePurpose: [],
+              otherPurpose: "",
+              pageCount: "",
+              mainPages: "",
+              designStyle: [],
+              otherStyle: "",
+              layout: "",
+              mainColor: "#3d4f5f",
+              secondaryColor: "#dc2626",
+              accentColor: "#f97316",
+              useDesignerColors: false,
+              typography: "",
+              customTypography: "",
+              features: [],
+              otherFeatures: "",
+              contentProvider: "",
+              mediaProvided: [],
+              deadline: "",
+              launchDate: "",
+              budget: "",
+              additionalNotes: "",
+              signature: "",
+              signatureDate: "",
+            });
+          }}
+          className="mt-8 inline-flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground font-medium rounded-xl border border-border hover:bg-secondary/80 transition-all duration-300"
+        >
+          Submit Another Form
+        </button>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
@@ -392,10 +489,20 @@ export const DesignOptionsForm = () => {
       <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
         <button
           type="submit"
-          className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent text-accent-foreground font-semibold rounded-xl shadow-lg hover:shadow-[var(--shadow-glow)] transition-all duration-300 hover:scale-105"
+          disabled={isSubmitting}
+          className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent text-accent-foreground font-semibold rounded-xl shadow-lg hover:shadow-[var(--shadow-glow)] transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
-          <Send className="w-5 h-5" />
-          Submit Form
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Submitting...
+            </>
+          ) : (
+            <>
+              <Send className="w-5 h-5" />
+              Submit Form
+            </>
+          )}
         </button>
         <button
           type="button"
