@@ -14,7 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      form_submissions: {
+        Row: {
+          accent_color: string | null
+          additional_notes: string | null
+          budget: string | null
+          business_name: string | null
+          content_provider: string | null
+          custom_typography: string | null
+          deadline: string | null
+          design_style: string[] | null
+          email: string
+          features: string[] | null
+          full_name: string
+          id: string
+          launch_date: string | null
+          layout: string | null
+          main_color: string | null
+          main_pages: string | null
+          media_provided: string[] | null
+          other_features: string | null
+          other_purpose: string | null
+          other_style: string | null
+          page_count: string | null
+          phone: string | null
+          secondary_color: string | null
+          signature: string | null
+          signature_date: string | null
+          submitted_at: string
+          typography: string | null
+          use_designer_colors: boolean | null
+          website_purpose: string[] | null
+        }
+        Insert: {
+          accent_color?: string | null
+          additional_notes?: string | null
+          budget?: string | null
+          business_name?: string | null
+          content_provider?: string | null
+          custom_typography?: string | null
+          deadline?: string | null
+          design_style?: string[] | null
+          email: string
+          features?: string[] | null
+          full_name: string
+          id?: string
+          launch_date?: string | null
+          layout?: string | null
+          main_color?: string | null
+          main_pages?: string | null
+          media_provided?: string[] | null
+          other_features?: string | null
+          other_purpose?: string | null
+          other_style?: string | null
+          page_count?: string | null
+          phone?: string | null
+          secondary_color?: string | null
+          signature?: string | null
+          signature_date?: string | null
+          submitted_at?: string
+          typography?: string | null
+          use_designer_colors?: boolean | null
+          website_purpose?: string[] | null
+        }
+        Update: {
+          accent_color?: string | null
+          additional_notes?: string | null
+          budget?: string | null
+          business_name?: string | null
+          content_provider?: string | null
+          custom_typography?: string | null
+          deadline?: string | null
+          design_style?: string[] | null
+          email?: string
+          features?: string[] | null
+          full_name?: string
+          id?: string
+          launch_date?: string | null
+          layout?: string | null
+          main_color?: string | null
+          main_pages?: string | null
+          media_provided?: string[] | null
+          other_features?: string | null
+          other_purpose?: string | null
+          other_style?: string | null
+          page_count?: string | null
+          phone?: string | null
+          secondary_color?: string | null
+          signature?: string | null
+          signature_date?: string | null
+          submitted_at?: string
+          typography?: string | null
+          use_designer_colors?: boolean | null
+          website_purpose?: string[] | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
