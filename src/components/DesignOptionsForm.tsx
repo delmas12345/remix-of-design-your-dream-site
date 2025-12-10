@@ -5,7 +5,8 @@ import { RadioGroup } from "./RadioGroup";
 import { TextInput } from "./TextInput";
 import { TextArea } from "./TextArea";
 import { ColorPicker } from "./ColorPicker";
-import { Send, FileText, Loader2, CheckCircle } from "lucide-react";
+import { TypographyPreview } from "./TypographyPreview";
+import { Send, FileText, Loader2, CheckCircle, Sparkles } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -369,15 +370,15 @@ export const DesignOptionsForm = () => {
 
       {/* Section 6: Typography */}
       <FormSection number={6} title="Typography (Text Style)" delay={350}>
-        <RadioGroup
-          name="typography"
+        <p className="text-muted-foreground text-sm mb-4">Select a typography style to preview how your text will look</p>
+        <TypographyPreview
           options={typographyOptions}
           selected={formData.typography}
           onChange={(value) => setFormData({ ...formData, typography: value })}
         />
         <TextInput
-          className="mt-4"
-          placeholder="Custom preference"
+          className="mt-6"
+          placeholder="Custom font preference (e.g., specific font name)"
           value={formData.customTypography}
           onChange={(e) => setFormData({ ...formData, customTypography: e.target.value })}
         />
