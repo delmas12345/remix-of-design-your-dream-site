@@ -23,7 +23,8 @@ export const RadioGroup = ({ name, options, selected, onChange, columns = 2 }: R
       {options.map((option) => (
         <label
           key={option.id}
-          className="checkbox-label group"
+          className="checkbox-label group cursor-pointer"
+          onClick={() => onChange(option.id)}
         >
           <div
             className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
