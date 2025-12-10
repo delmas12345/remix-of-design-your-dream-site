@@ -34,7 +34,7 @@ const Index = () => {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-primary-foreground/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6 opacity-0 animate-fade-in">
               <Code className="w-4 h-4" />
-              <span className="text-sm font-medium">Let's Build Something Amazing</span>
+              <span className="text-sm font-medium font-mono">Let's Build Something Amazing</span>
             </div>
             
             <h1 className="text-4xl md:text-6xl font-bold mb-6 opacity-0 animate-fade-in leading-tight" style={{
