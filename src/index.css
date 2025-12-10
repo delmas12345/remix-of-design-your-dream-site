@@ -9,42 +9,44 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 215 25% 27%;
+    --background: 220 20% 97%;
+    --foreground: 220 30% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 27%;
+    --card-foreground: 220 30% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 27%;
+    --popover-foreground: 220 30% 20%;
 
-    --primary: 215 25% 27%;
+    --primary: 220 70% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 215 25% 27%;
+    --secondary: 220 25% 94%;
+    --secondary-foreground: 220 30% 20%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 220 20% 94%;
+    --muted-foreground: 220 15% 45%;
 
-    --accent: 0 84% 50%;
+    --accent: 350 85% 55%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 20% 90%;
-    --input: 214 20% 90%;
-    --ring: 0 84% 50%;
+    --border: 220 20% 88%;
+    --input: 220 20% 88%;
+    --ring: 350 85% 55%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
     /* Custom tokens */
-    --gradient-hero: linear-gradient(135deg, hsl(215 25% 27%) 0%, hsl(215 30% 20%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(0 84% 50%) 0%, hsl(0 84% 40%) 100%);
-    --shadow-card: 0 4px 24px -4px hsl(215 25% 27% / 0.08);
-    --shadow-card-hover: 0 8px 32px -4px hsl(215 25% 27% / 0.12);
-    --shadow-glow: 0 0 24px hsl(0 84% 50% / 0.2);
+    --gradient-hero: linear-gradient(135deg, hsl(220 70% 45%) 0%, hsl(250 60% 40%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(350 85% 55%) 0%, hsl(320 80% 50%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 25% 98%) 100%);
+    --shadow-card: 0 4px 24px -4px hsl(220 30% 20% / 0.06), 0 2px 8px -2px hsl(220 30% 20% / 0.04);
+    --shadow-card-hover: 0 12px 40px -8px hsl(220 30% 20% / 0.12), 0 4px 12px -2px hsl(220 30% 20% / 0.06);
+    --shadow-glow: 0 0 32px hsl(350 85% 55% / 0.25);
+    --shadow-input-focus: 0 0 0 4px hsl(350 85% 55% / 0.12);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -57,33 +59,36 @@
   }
 
   .dark {
-    --background: 215 30% 8%;
-    --foreground: 210 20% 96%;
+    --background: 220 30% 6%;
+    --foreground: 220 20% 95%;
 
-    --card: 215 28% 12%;
-    --card-foreground: 210 20% 96%;
+    --card: 220 28% 10%;
+    --card-foreground: 220 20% 95%;
 
-    --popover: 215 28% 12%;
-    --popover-foreground: 210 20% 96%;
+    --popover: 220 28% 10%;
+    --popover-foreground: 220 20% 95%;
 
-    --primary: 210 20% 96%;
-    --primary-foreground: 215 25% 27%;
+    --primary: 220 70% 55%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 215 25% 18%;
-    --secondary-foreground: 210 20% 96%;
+    --secondary: 220 25% 15%;
+    --secondary-foreground: 220 20% 95%;
 
-    --muted: 215 25% 18%;
-    --muted-foreground: 215 16% 60%;
+    --muted: 220 25% 15%;
+    --muted-foreground: 220 15% 55%;
 
-    --accent: 0 84% 55%;
+    --accent: 350 85% 60%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 40%;
+    --destructive: 0 62.8% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 25% 20%;
-    --input: 215 25% 20%;
-    --ring: 0 84% 55%;
+    --border: 220 25% 18%;
+    --input: 220 25% 18%;
+    --ring: 350 85% 60%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(220 70% 35%) 0%, hsl(250 60% 30%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(220 28% 10%) 0%, hsl(220 28% 8%) 100%);
   }
 }
 
@@ -104,34 +109,48 @@
 
 @layer utilities {
   .section-card {
-    @apply bg-card rounded-xl border border-border p-6 md:p-8 shadow-[var(--shadow-card)] transition-shadow duration-300 hover:shadow-[var(--shadow-card-hover)];
+    @apply bg-card rounded-2xl border border-border p-6 md:p-8 shadow-[var(--shadow-card)] transition-all duration-300 hover:shadow-[var(--shadow-card-hover)];
+    background: var(--gradient-card);
   }
 
   .form-checkbox {
-    @apply w-5 h-5 rounded border-2 border-border bg-background transition-all duration-200 
+    @apply w-5 h-5 rounded-md border-2 border-border bg-background transition-all duration-200 
            checked:bg-accent checked:border-accent cursor-pointer
            focus:ring-2 focus:ring-accent/20 focus:ring-offset-2;
   }
 
   .form-input {
-    @apply w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground
+    @apply w-full px-4 py-3.5 rounded-xl border border-border bg-background text-foreground
            placeholder:text-muted-foreground transition-all duration-200
-           focus:border-accent focus:ring-2 focus:ring-accent/20 focus:outline-none;
+           focus:border-accent focus:shadow-[var(--shadow-input-focus)] focus:outline-none;
   }
 
   .section-title {
-    @apply text-xl md:text-2xl font-semibold text-foreground mb-6 flex items-center gap-3;
+    @apply text-xl md:text-2xl font-bold text-foreground mb-6 flex items-center gap-4;
   }
 
   .section-number {
-    @apply w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-bold;
+    @apply w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent/80 text-accent-foreground flex items-center justify-center text-sm font-bold shadow-md;
   }
 
   .checkbox-label {
-    @apply flex items-center gap-3 p-3 rounded-lg border border-transparent hover:border-border hover:bg-secondary/50 transition-all duration-200 cursor-pointer;
+    @apply flex items-center gap-3 p-4 rounded-xl border border-border hover:border-accent/50 hover:bg-accent/5 transition-all duration-200 cursor-pointer;
   }
 
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70;
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-hero);
+  }
+
+  .glass-effect {
+    @apply backdrop-blur-md bg-card/80;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary to-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5;
+  }
+
+  .btn-accent {
+    @apply bg-gradient-to-r from-accent to-accent/90 text-accent-foreground font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5;
   }
 }
