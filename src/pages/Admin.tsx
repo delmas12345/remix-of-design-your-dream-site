@@ -12,16 +12,28 @@ interface Submission {
   email: string;
   phone: string | null;
   website_purpose: string[] | null;
+  other_purpose: string | null;
   page_count: string | null;
+  main_pages: string | null;
   design_style: string[] | null;
+  other_style: string | null;
   layout: string | null;
   main_color: string | null;
   secondary_color: string | null;
   accent_color: string | null;
+  use_designer_colors: boolean | null;
+  typography: string | null;
+  custom_typography: string | null;
   features: string[] | null;
+  other_features: string | null;
+  content_provider: string | null;
+  media_provided: string[] | null;
   budget: string | null;
   deadline: string | null;
+  launch_date: string | null;
   additional_notes: string | null;
+  signature: string | null;
+  signature_date: string | null;
   submitted_at: string;
 }
 
@@ -279,134 +291,276 @@ const Admin = () => {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Contact Info */}
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-foreground">Contact</h3>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Mail className="w-4 h-4" />
-                      <a href={`mailto:${selectedSubmission.email}`} className="hover:text-accent">
-                        {selectedSubmission.email}
-                      </a>
-                    </div>
-                    {selectedSubmission.phone && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Phone className="w-4 h-4" />
-                        <a href={`tel:${selectedSubmission.phone}`} className="hover:text-accent">
-                          {selectedSubmission.phone}
+                <div className="space-y-8">
+                  {/* Section 1: Client Information */}
+                  <div className="p-4 bg-secondary/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">1. Client Information</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-xs text-muted-foreground">Full Name</span>
+                        <p className="text-foreground font-medium">{selectedSubmission.full_name}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground">Business Name</span>
+                        <p className="text-foreground">{selectedSubmission.business_name || "N/A"}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground">Email</span>
+                        <a href={`mailto:${selectedSubmission.email}`} className="text-accent hover:underline flex items-center gap-1">
+                          <Mail className="w-4 h-4" />
+                          {selectedSubmission.email}
                         </a>
                       </div>
-                    )}
+                      <div>
+                        <span className="text-xs text-muted-foreground">Phone</span>
+                        {selectedSubmission.phone ? (
+                          <a href={`tel:${selectedSubmission.phone}`} className="text-accent hover:underline flex items-center gap-1">
+                            <Phone className="w-4 h-4" />
+                            {selectedSubmission.phone}
+                          </a>
+                        ) : (
+                          <p className="text-muted-foreground">N/A</p>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Project Details */}
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-foreground">Project</h3>
-                    {selectedSubmission.page_count && (
-                      <p className="text-muted-foreground">
-                        Pages: {selectedSubmission.page_count}
-                      </p>
-                    )}
-                    {selectedSubmission.budget && (
-                      <p className="text-muted-foreground">
-                        Budget: {selectedSubmission.budget}
-                      </p>
-                    )}
-                    {selectedSubmission.deadline && (
-                      <p className="text-muted-foreground">
-                        Deadline: {selectedSubmission.deadline}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Website Purpose */}
-                  {selectedSubmission.website_purpose && selectedSubmission.website_purpose.length > 0 && (
+                  {/* Section 2: Website Purpose */}
+                  <div className="p-4 bg-secondary/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">2. Website Purpose</h3>
                     <div className="space-y-3">
-                      <h3 className="font-semibold text-foreground">Purpose</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedSubmission.website_purpose.map((purpose) => (
-                          <span
-                            key={purpose}
-                            className="px-3 py-1 bg-secondary text-secondary-foreground text-sm rounded-full"
-                          >
-                            {purpose}
-                          </span>
-                        ))}
+                      <div>
+                        <span className="text-xs text-muted-foreground">Selected Purposes</span>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {selectedSubmission.website_purpose && selectedSubmission.website_purpose.length > 0 ? (
+                            selectedSubmission.website_purpose.map((purpose) => (
+                              <span key={purpose} className="px-3 py-1 bg-accent/20 text-accent text-sm rounded-full">
+                                {purpose}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-muted-foreground">N/A</span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
-
-                  {/* Design Style */}
-                  {selectedSubmission.design_style && selectedSubmission.design_style.length > 0 && (
-                    <div className="space-y-3">
-                      <h3 className="font-semibold text-foreground">Style</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedSubmission.design_style.map((style) => (
-                          <span
-                            key={style}
-                            className="px-3 py-1 bg-secondary text-secondary-foreground text-sm rounded-full"
-                          >
-                            {style}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Colors */}
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-foreground">Colors</h3>
-                    <div className="flex gap-3">
-                      {selectedSubmission.main_color && (
-                        <div
-                          className="w-10 h-10 rounded-lg border border-border"
-                          style={{ backgroundColor: selectedSubmission.main_color }}
-                          title={`Main: ${selectedSubmission.main_color}`}
-                        />
-                      )}
-                      {selectedSubmission.secondary_color && (
-                        <div
-                          className="w-10 h-10 rounded-lg border border-border"
-                          style={{ backgroundColor: selectedSubmission.secondary_color }}
-                          title={`Secondary: ${selectedSubmission.secondary_color}`}
-                        />
-                      )}
-                      {selectedSubmission.accent_color && (
-                        <div
-                          className="w-10 h-10 rounded-lg border border-border"
-                          style={{ backgroundColor: selectedSubmission.accent_color }}
-                          title={`Accent: ${selectedSubmission.accent_color}`}
-                        />
+                      {selectedSubmission.other_purpose && (
+                        <div>
+                          <span className="text-xs text-muted-foreground">Other Purpose</span>
+                          <p className="text-foreground">{selectedSubmission.other_purpose}</p>
+                        </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Features */}
-                  {selectedSubmission.features && selectedSubmission.features.length > 0 && (
-                    <div className="space-y-3 md:col-span-2">
-                      <h3 className="font-semibold text-foreground">Features</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedSubmission.features.map((feature) => (
-                          <span
-                            key={feature}
-                            className="px-3 py-1 bg-accent/10 text-accent text-sm rounded-full"
-                          >
-                            {feature}
-                          </span>
-                        ))}
+                  {/* Section 3: Number of Pages */}
+                  <div className="p-4 bg-secondary/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">3. Number of Pages</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-xs text-muted-foreground">Page Count</span>
+                        <p className="text-foreground">{selectedSubmission.page_count || "N/A"}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground">Main Pages</span>
+                        <p className="text-foreground whitespace-pre-wrap">{selectedSubmission.main_pages || "N/A"}</p>
                       </div>
                     </div>
-                  )}
+                  </div>
 
-                  {/* Additional Notes */}
-                  {selectedSubmission.additional_notes && (
-                    <div className="space-y-3 md:col-span-2">
-                      <h3 className="font-semibold text-foreground">Notes</h3>
-                      <p className="text-muted-foreground whitespace-pre-wrap">
-                        {selectedSubmission.additional_notes}
-                      </p>
+                  {/* Section 4: Website Style & Layout */}
+                  <div className="p-4 bg-secondary/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">4. Website Style & Layout</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <span className="text-xs text-muted-foreground">Design Styles</span>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {selectedSubmission.design_style && selectedSubmission.design_style.length > 0 ? (
+                            selectedSubmission.design_style.map((style) => (
+                              <span key={style} className="px-3 py-1 bg-accent/20 text-accent text-sm rounded-full">
+                                {style}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-muted-foreground">N/A</span>
+                          )}
+                        </div>
+                      </div>
+                      {selectedSubmission.other_style && (
+                        <div>
+                          <span className="text-xs text-muted-foreground">Other Style</span>
+                          <p className="text-foreground">{selectedSubmission.other_style}</p>
+                        </div>
+                      )}
+                      <div>
+                        <span className="text-xs text-muted-foreground">Layout Preference</span>
+                        <p className="text-foreground">{selectedSubmission.layout || "N/A"}</p>
+                      </div>
                     </div>
-                  )}
+                  </div>
+
+                  {/* Section 5: Color Palette */}
+                  <div className="p-4 bg-secondary/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">5. Color Palette</h3>
+                    <div className="space-y-4">
+                      <div className="flex flex-wrap gap-6">
+                        <div>
+                          <span className="text-xs text-muted-foreground block mb-1">Main Color</span>
+                          {selectedSubmission.main_color ? (
+                            <div className="flex items-center gap-2">
+                              <div className="w-10 h-10 rounded-lg border border-border" style={{ backgroundColor: selectedSubmission.main_color }} />
+                              <span className="text-sm text-foreground">{selectedSubmission.main_color}</span>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">N/A</span>
+                          )}
+                        </div>
+                        <div>
+                          <span className="text-xs text-muted-foreground block mb-1">Secondary Color</span>
+                          {selectedSubmission.secondary_color ? (
+                            <div className="flex items-center gap-2">
+                              <div className="w-10 h-10 rounded-lg border border-border" style={{ backgroundColor: selectedSubmission.secondary_color }} />
+                              <span className="text-sm text-foreground">{selectedSubmission.secondary_color}</span>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">N/A</span>
+                          )}
+                        </div>
+                        <div>
+                          <span className="text-xs text-muted-foreground block mb-1">Accent Color</span>
+                          {selectedSubmission.accent_color ? (
+                            <div className="flex items-center gap-2">
+                              <div className="w-10 h-10 rounded-lg border border-border" style={{ backgroundColor: selectedSubmission.accent_color }} />
+                              <span className="text-sm text-foreground">{selectedSubmission.accent_color}</span>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">N/A</span>
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground">Use Designer Colors</span>
+                        <p className="text-foreground">{selectedSubmission.use_designer_colors ? "Yes" : "No"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section 6: Typography */}
+                  <div className="p-4 bg-secondary/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">6. Typography</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-xs text-muted-foreground">Typography Style</span>
+                        <p className="text-foreground">{selectedSubmission.typography || "N/A"}</p>
+                      </div>
+                      {selectedSubmission.custom_typography && (
+                        <div>
+                          <span className="text-xs text-muted-foreground">Custom Typography</span>
+                          <p className="text-foreground">{selectedSubmission.custom_typography}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Section 7: Features & Functionalities */}
+                  <div className="p-4 bg-secondary/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">7. Features & Functionalities</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <span className="text-xs text-muted-foreground">Selected Features</span>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {selectedSubmission.features && selectedSubmission.features.length > 0 ? (
+                            selectedSubmission.features.map((feature) => (
+                              <span key={feature} className="px-3 py-1 bg-accent/20 text-accent text-sm rounded-full">
+                                {feature}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-muted-foreground">N/A</span>
+                          )}
+                        </div>
+                      </div>
+                      {selectedSubmission.other_features && (
+                        <div>
+                          <span className="text-xs text-muted-foreground">Other Features</span>
+                          <p className="text-foreground">{selectedSubmission.other_features}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Section 8: Media & Content */}
+                  <div className="p-4 bg-secondary/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">8. Media & Content</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <span className="text-xs text-muted-foreground">Content Provider</span>
+                        <p className="text-foreground">{selectedSubmission.content_provider || "N/A"}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground">Media Provided</span>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {selectedSubmission.media_provided && selectedSubmission.media_provided.length > 0 ? (
+                            selectedSubmission.media_provided.map((media) => (
+                              <span key={media} className="px-3 py-1 bg-secondary text-secondary-foreground text-sm rounded-full">
+                                {media}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-muted-foreground">N/A</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section 9: Project Deadline */}
+                  <div className="p-4 bg-secondary/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">9. Project Deadline</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-xs text-muted-foreground">Deadline</span>
+                        <p className="text-foreground">{selectedSubmission.deadline || "N/A"}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground">Launch Date</span>
+                        <p className="text-foreground">{selectedSubmission.launch_date || "N/A"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section 10: Budget Range */}
+                  <div className="p-4 bg-secondary/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">10. Budget Range</h3>
+                    <div>
+                      <span className="text-xs text-muted-foreground">Budget</span>
+                      <p className="text-foreground text-lg font-medium">{selectedSubmission.budget || "N/A"}</p>
+                    </div>
+                  </div>
+
+                  {/* Section 11: Additional Notes */}
+                  <div className="p-4 bg-secondary/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">11. Additional Notes</h3>
+                    <p className="text-foreground whitespace-pre-wrap">{selectedSubmission.additional_notes || "N/A"}</p>
+                  </div>
+
+                  {/* Section 12: Client Signature */}
+                  <div className="p-4 bg-secondary/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">12. Client Signature</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-xs text-muted-foreground">Signature</span>
+                        <p className="text-foreground font-medium italic">{selectedSubmission.signature || "N/A"}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground">Date</span>
+                        <p className="text-foreground">{selectedSubmission.signature_date || "N/A"}</p>
+                      </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-border">
+                      <span className="text-xs text-muted-foreground">Submitted At</span>
+                      <p className="text-foreground">{new Date(selectedSubmission.submitted_at).toLocaleString()}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (

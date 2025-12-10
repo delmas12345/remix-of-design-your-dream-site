@@ -32,7 +32,8 @@ export const CheckboxGroup = ({ options, selected, onChange, columns = 2 }: Chec
       {options.map((option) => (
         <label
           key={option.id}
-          className="checkbox-label group"
+          className="checkbox-label group cursor-pointer"
+          onClick={() => toggleOption(option.id)}
         >
           <div
             className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 ${
