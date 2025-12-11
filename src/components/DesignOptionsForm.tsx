@@ -7,6 +7,7 @@ import { TextArea } from "./TextArea";
 import { ColorPicker } from "./ColorPicker";
 import { TypographyPreview } from "./TypographyPreview";
 import AIFormAssistant from "./AIFormAssistant";
+import AuthenticIAMascot from "./AuthenticIAMascot";
 import { Send, FileText, Loader2, CheckCircle, Sparkles } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -272,6 +273,7 @@ export const DesignOptionsForm = () => {
 
   return (
     <>
+      <AuthenticIAMascot />
       <AIFormAssistant onApplySuggestions={handleApplySuggestions} />
       <form onSubmit={handleSubmit} className="space-y-8">
       {/* Section 1: Client Information */}
