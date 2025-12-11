@@ -6,9 +6,24 @@ import { TextInput } from "./TextInput";
 import { TextArea } from "./TextArea";
 import { ColorPicker } from "./ColorPicker";
 import { TypographyPreview } from "./TypographyPreview";
+import AIFormAssistant from "./AIFormAssistant";
 import { Send, FileText, Loader2, CheckCircle, Sparkles } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+
+interface FormSuggestions {
+  websitePurpose?: string[];
+  pageCount?: string;
+  mainPages?: string;
+  designStyle?: string[];
+  layout?: string;
+  typography?: string;
+  features?: string[];
+  contentProvider?: string;
+  media?: string[];
+  deadline?: string;
+  budget?: string;
+}
 
 const websitePurposeOptions = [
   { id: "business", label: "Business Website" },
@@ -135,6 +150,23 @@ export const DesignOptionsForm = () => {
     signatureDate: "",
   });
 
+  const handleApplySuggestions = (suggestions: FormSuggestions) => {
+    setFormData(prev => ({
+      ...prev,
+      websitePurpose: suggestions.websitePurpose || prev.websitePurpose,
+      pageCount: suggestions.pageCount || prev.pageCount,
+      mainPages: suggestions.mainPages || prev.mainPages,
+      designStyle: suggestions.designStyle || prev.designStyle,
+      layout: suggestions.layout || prev.layout,
+      typography: suggestions.typography || prev.typography,
+      features: suggestions.features || prev.features,
+      contentProvider: suggestions.contentProvider || prev.contentProvider,
+      mediaProvided: suggestions.media || prev.mediaProvided,
+      deadline: suggestions.deadline || prev.deadline,
+      budget: suggestions.budget || prev.budget,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -239,7 +271,9 @@ export const DesignOptionsForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <>
+      <AIFormAssistant onApplySuggestions={handleApplySuggestions} />
+      <form onSubmit={handleSubmit} className="space-y-8">
       {/* Section 1: Client Information */}
       <FormSection number={1} title="Client Information" delay={100}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -514,6 +548,7 @@ export const DesignOptionsForm = () => {
           Print Form
         </button>
       </div>
-    </form>
+      </form>
+    </>
   );
 };
