@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Bot, Sparkles, ArrowDown, X } from 'lucide-react';
+import { Sparkles, ArrowDown, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import mascotImage from '@/assets/authenticia-mascot.png';
 
 const AuthenticIAMascot: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -38,8 +39,8 @@ const AuthenticIAMascot: React.FC = () => {
         {/* Mascot Avatar */}
         <div className="flex items-start gap-4">
           <div className="flex-shrink-0">
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary via-accent to-primary flex items-center justify-center shadow-lg animate-pulse">
-              <Bot className="w-8 h-8 text-primary-foreground" />
+            <div className="w-16 h-16 rounded-full overflow-hidden shadow-lg border-2 border-primary/30">
+              <img src={mascotImage} alt="AuthenticIA Mascot" className="w-full h-full object-cover" />
             </div>
           </div>
 
