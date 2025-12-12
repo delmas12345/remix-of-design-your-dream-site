@@ -8,9 +8,11 @@ import { ColorPicker } from "./ColorPicker";
 import { TypographyPreview } from "./TypographyPreview";
 import AIFormAssistant from "./AIFormAssistant";
 import AuthenticIAMascot from "./AuthenticIAMascot";
-import { Send, FileText, Loader2, CheckCircle, Sparkles } from "lucide-react";
+import { Send, FileText, Loader2, CheckCircle, Sparkles, Wand2, DollarSign, Smartphone, Globe, Layers } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+
+const REWRITE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/rewrite-description`;
 
 interface FormSuggestions {
   websitePurpose?: string[];
@@ -110,22 +112,62 @@ const deadlineOptions = [
   { id: "flexible", label: "Flexible Deadline" },
 ];
 
-const budgetOptions = [
-  { id: "under500", label: "Under $500" },
-  { id: "500-1000", label: "$500 – $1,000" },
-  { id: "1000-3000", label: "$1,000 – $3,000" },
-  { id: "3000-5000", label: "$3,000 – $5,000" },
-  { id: "5000+", label: "$5,000+ (Custom Quote)" },
+const projectTypeOptions = [
+  { 
+    id: "apk", 
+    label: "Mobile App (APK)", 
+    minBudget: 1000, 
+    icon: Smartphone,
+    description: "Native Android application"
+  },
+  { 
+    id: "website", 
+    label: "Website", 
+    minBudget: 500, 
+    icon: Globe,
+    description: "Traditional responsive website"
+  },
+  { 
+    id: "pwa", 
+    label: "Web App (PWA)", 
+    minBudget: 700, 
+    icon: Layers,
+    description: "Progressive Web App - works on all devices"
+  },
 ];
+
+const getBudgetOptionsForType = (projectType: string) => {
+  const minBudgets: Record<string, number> = {
+    apk: 1000,
+    website: 500,
+    pwa: 700,
+  };
+  const min = minBudgets[projectType] || 500;
+  
+  const allOptions = [
+    { id: "500-1000", label: "$500 – $1,000", minRequired: 500 },
+    { id: "700-1000", label: "$700 – $1,000", minRequired: 700 },
+    { id: "1000-2000", label: "$1,000 – $2,000", minRequired: 1000 },
+    { id: "2000-3000", label: "$2,000 – $3,000", minRequired: 500 },
+    { id: "3000-5000", label: "$3,000 – $5,000", minRequired: 500 },
+    { id: "5000-10000", label: "$5,000 – $10,000", minRequired: 500 },
+    { id: "10000+", label: "$10,000+ (Enterprise)", minRequired: 500 },
+  ];
+  
+  return allOptions.filter(opt => opt.minRequired >= min || opt.minRequired === 500);
+};
 
 export const DesignOptionsForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isRewriting, setIsRewriting] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     businessName: "",
     email: "",
     phone: "",
+    projectType: "",
+    projectDescription: "",
     websitePurpose: [] as string[],
     otherPurpose: "",
     pageCount: "",
@@ -150,6 +192,54 @@ export const DesignOptionsForm = () => {
     signature: "",
     signatureDate: "",
   });
+
+  const handleRewriteDescription = async () => {
+    if (!formData.projectDescription.trim()) {
+      toast({
+        title: "No Description",
+        description: "Please write a description first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsRewriting(true);
+    try {
+      const response = await fetch(REWRITE_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          description: formData.projectDescription,
+          projectType: formData.projectType || "website",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to rewrite description");
+      }
+
+      const data = await response.json();
+      if (data.rewrittenDescription) {
+        setFormData(prev => ({ ...prev, projectDescription: data.rewrittenDescription }));
+        toast({
+          title: "Description Enhanced!",
+          description: "Your project description has been professionally rewritten.",
+        });
+      }
+    } catch (error) {
+      console.error("Error rewriting description:", error);
+      toast({
+        title: "Error",
+        description: "Could not rewrite description. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRewriting(false);
+    }
+  };
 
   const handleApplySuggestions = (suggestions: FormSuggestions) => {
     setFormData(prev => ({
@@ -238,6 +328,8 @@ export const DesignOptionsForm = () => {
               businessName: "",
               email: "",
               phone: "",
+              projectType: "",
+              projectDescription: "",
               websitePurpose: [],
               otherPurpose: "",
               pageCount: "",
@@ -310,8 +402,95 @@ export const DesignOptionsForm = () => {
         </div>
       </FormSection>
 
-      {/* Section 2: Website Purpose */}
-      <FormSection number={2} title="Website Purpose" delay={150}>
+      {/* Section 2: Project Type */}
+      <FormSection number={2} title="Project Type" delay={120}>
+        <p className="text-muted-foreground text-sm mb-4">
+          Choose the type of project you need. Your budget options will adjust accordingly.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {projectTypeOptions.map((option) => {
+            const Icon = option.icon;
+            const isSelected = formData.projectType === option.id;
+            return (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => setFormData({ ...formData, projectType: option.id, budget: "" })}
+                className={`relative p-6 rounded-xl border-2 transition-all duration-300 text-left ${
+                  isSelected
+                    ? "border-accent bg-accent/10 shadow-lg"
+                    : "border-border hover:border-accent/50 hover:bg-secondary/50"
+                }`}
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`p-2 rounded-lg ${isSelected ? "bg-accent text-accent-foreground" : "bg-secondary"}`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span className="font-semibold text-foreground">{option.label}</span>
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">{option.description}</p>
+                <div className="flex items-center gap-1 text-accent font-bold">
+                  <DollarSign className="w-4 h-4" />
+                  <span>Starting at ${option.minBudget.toLocaleString()}</span>
+                </div>
+                {isSelected && (
+                  <div className="absolute top-3 right-3 w-3 h-3 bg-accent rounded-full" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Budget Message */}
+        <div className="p-4 rounded-xl bg-gradient-to-r from-accent/10 to-primary/10 border border-accent/20">
+          <div className="flex items-start gap-3">
+            <Sparkles className="w-5 h-5 text-accent mt-0.5" />
+            <div>
+              <p className="font-semibold text-foreground mb-1">Quality Investment = Quality Results</p>
+              <p className="text-sm text-muted-foreground">
+                A good budget enables us to deliver a more professional, feature-rich, and polished system. 
+                The more resources available, the more we can invest in design excellence, advanced features, 
+                and thorough testing to ensure your project stands out.
+              </p>
+            </div>
+          </div>
+        </div>
+      </FormSection>
+
+      {/* Section 3: Project Description */}
+      <FormSection number={3} title="Project Description" delay={130}>
+        <p className="text-muted-foreground text-sm mb-4">
+          Describe your project idea in your own words. Our AI will help you refine it professionally.
+        </p>
+        <TextArea
+          label="Your Project Idea"
+          placeholder="Describe what you want to build... (e.g., I need an app for my restaurant where customers can order food, make reservations, and earn loyalty points...)"
+          value={formData.projectDescription}
+          onChange={(e) => setFormData({ ...formData, projectDescription: e.target.value })}
+          rows={5}
+        />
+        <button
+          type="button"
+          onClick={handleRewriteDescription}
+          disabled={isRewriting || !formData.projectDescription.trim()}
+          className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent to-primary text-primary-foreground font-medium rounded-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isRewriting ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Enhancing...
+            </>
+          ) : (
+            <>
+              <Wand2 className="w-4 h-4" />
+              Enhance with AI
+            </>
+          )}
+        </button>
+      </FormSection>
+
+      {/* Section 4: Website Purpose */}
+      <FormSection number={4} title="Website Purpose" delay={150}>
         <p className="text-muted-foreground text-sm mb-4">Select one or more</p>
         <CheckboxGroup
           options={websitePurposeOptions}
@@ -326,8 +505,8 @@ export const DesignOptionsForm = () => {
         />
       </FormSection>
 
-      {/* Section 3: Number of Pages */}
-      <FormSection number={3} title="Number of Pages" delay={200}>
+      {/* Section 5: Number of Pages */}
+      <FormSection number={5} title="Number of Pages" delay={200}>
         <RadioGroup
           name="pageCount"
           options={pageCountOptions}
@@ -343,8 +522,8 @@ export const DesignOptionsForm = () => {
         />
       </FormSection>
 
-      {/* Section 4: Website Style & Layout */}
-      <FormSection number={4} title="Website Style & Layout" delay={250}>
+      {/* Section 6: Website Style & Layout */}
+      <FormSection number={6} title="Website Style & Layout" delay={250}>
         <div className="space-y-6">
           <div>
             <h3 className="font-medium text-foreground mb-3">A. Design Style (Select one or more)</h3>
@@ -372,8 +551,8 @@ export const DesignOptionsForm = () => {
         </div>
       </FormSection>
 
-      {/* Section 5: Color Palette */}
-      <FormSection number={5} title="Color Palette" delay={300}>
+      {/* Section 7: Color Palette */}
+      <FormSection number={7} title="Color Palette" delay={300}>
         <div className="space-y-4">
           <ColorPicker
             label="Main Color"
@@ -404,8 +583,8 @@ export const DesignOptionsForm = () => {
         </div>
       </FormSection>
 
-      {/* Section 6: Typography */}
-      <FormSection number={6} title="Typography (Text Style)" delay={350}>
+      {/* Section 8: Typography */}
+      <FormSection number={8} title="Typography (Text Style)" delay={350}>
         <p className="text-muted-foreground text-sm mb-4">Select a typography style to preview how your text will look</p>
         <TypographyPreview
           options={typographyOptions}
@@ -420,8 +599,8 @@ export const DesignOptionsForm = () => {
         />
       </FormSection>
 
-      {/* Section 7: Features & Functionalities */}
-      <FormSection number={7} title="Features & Functionalities" delay={400}>
+      {/* Section 9: Features & Functionalities */}
+      <FormSection number={9} title="Features & Functionalities" delay={400}>
         <p className="text-muted-foreground text-sm mb-4">Check all that apply</p>
         <CheckboxGroup
           options={featureOptions}
@@ -437,8 +616,8 @@ export const DesignOptionsForm = () => {
         />
       </FormSection>
 
-      {/* Section 8: Media & Content */}
-      <FormSection number={8} title="Media & Content" delay={450}>
+      {/* Section 10: Media & Content */}
+      <FormSection number={10} title="Media & Content" delay={450}>
         <div className="space-y-6">
           <div>
             <h3 className="font-medium text-foreground mb-3">A. Content Provided By:</h3>
@@ -462,8 +641,8 @@ export const DesignOptionsForm = () => {
         </div>
       </FormSection>
 
-      {/* Section 9: Project Deadline */}
-      <FormSection number={9} title="Project Deadline" delay={500}>
+      {/* Section 11: Project Deadline */}
+      <FormSection number={11} title="Project Deadline" delay={500}>
         <RadioGroup
           name="deadline"
           options={deadlineOptions}
@@ -479,21 +658,32 @@ export const DesignOptionsForm = () => {
         />
       </FormSection>
 
-      {/* Section 10: Budget Range */}
-      <FormSection number={10} title="Budget Range" delay={550}>
-        <p className="text-muted-foreground text-sm mb-4">
-          Budget may vary based on complexity and timeline requirements
-        </p>
-        <RadioGroup
-          name="budget"
-          options={budgetOptions}
-          selected={formData.budget}
-          onChange={(value) => setFormData({ ...formData, budget: value })}
-        />
+      {/* Section 12: Budget Range */}
+      <FormSection number={12} title="Budget Range" delay={550}>
+        <div className="mb-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20">
+          <p className="text-sm text-foreground">
+            {formData.projectType ? (
+              <>
+                <span className="font-semibold">Minimum budget for {projectTypeOptions.find(p => p.id === formData.projectType)?.label}:</span>{" "}
+                <span className="text-accent font-bold">${projectTypeOptions.find(p => p.id === formData.projectType)?.minBudget.toLocaleString()}</span>
+              </>
+            ) : (
+              "Please select a project type above to see budget options."
+            )}
+          </p>
+        </div>
+        {formData.projectType && (
+          <RadioGroup
+            name="budget"
+            options={getBudgetOptionsForType(formData.projectType)}
+            selected={formData.budget}
+            onChange={(value) => setFormData({ ...formData, budget: value })}
+          />
+        )}
       </FormSection>
 
-      {/* Section 11: Additional Notes */}
-      <FormSection number={11} title="Additional Notes" delay={600}>
+      {/* Section 13: Additional Notes */}
+      <FormSection number={13} title="Additional Notes" delay={600}>
         <TextArea
           placeholder="Please list any examples, inspirations, or special requirements..."
           value={formData.additionalNotes}
@@ -502,8 +692,8 @@ export const DesignOptionsForm = () => {
         />
       </FormSection>
 
-      {/* Section 12: Client Signature */}
-      <FormSection number={12} title="Client Signature" delay={650}>
+      {/* Section 14: Client Signature */}
+      <FormSection number={14} title="Client Signature" delay={650}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <TextInput
             label="Signature"

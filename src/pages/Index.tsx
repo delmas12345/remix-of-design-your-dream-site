@@ -1,5 +1,5 @@
 import { DesignOptionsForm } from "@/components/DesignOptionsForm";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo.png";
 import { Palette, Code, Rocket } from "lucide-react";
 const Index = () => {
   return <div className="min-h-screen bg-background">
@@ -94,7 +94,7 @@ const Index = () => {
         
         <div className="relative container max-w-5xl mx-auto px-4 py-12 text-center text-primary-foreground">
           <div className="flex items-center justify-center gap-4 mb-4">
-            <img src={logo} alt="Authentic Tech Logo" className="h-12 w-12 object-contain bg-primary-foreground rounded-xl p-1.5 shadow-lg" />
+            <img src={logo} alt="Authentic Tech Logo" className="h-12 w-12 object-contain rounded-xl shadow-lg" />
             <span className="font-bold text-xl tracking-tight">Authentic Tech</span>
           </div>
           <p className="text-primary-foreground/60 text-sm">
