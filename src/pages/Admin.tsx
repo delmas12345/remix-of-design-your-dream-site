@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Lock, Trash2, Eye, Calendar, Mail, Phone, ArrowLeft, RefreshCw } from "lucide-react";
+import { Lock, Trash2, Eye, Calendar, Mail, Phone, ArrowLeft, RefreshCw, Smartphone, Globe, Layers, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/logo.png";
 import { Link } from "react-router-dom";
 
 interface Submission {
@@ -11,6 +11,8 @@ interface Submission {
   business_name: string | null;
   email: string;
   phone: string | null;
+  project_type: string | null;
+  project_description: string | null;
   website_purpose: string[] | null;
   other_purpose: string | null;
   page_count: string | null;
@@ -36,6 +38,12 @@ interface Submission {
   signature_date: string | null;
   submitted_at: string;
 }
+
+const projectTypeLabels: Record<string, { label: string; icon: typeof Smartphone }> = {
+  apk: { label: "Mobile App (APK)", icon: Smartphone },
+  website: { label: "Website", icon: Globe },
+  pwa: { label: "Web App (PWA)", icon: Layers },
+};
 
 const ADMIN_PASSWORD = "Delfr55%";
 
@@ -251,12 +259,24 @@ const Admin = () => {
                           : "border-border hover:border-accent/50"
                       }`}
                     >
-                      <div className="font-medium text-foreground">
-                        {submission.full_name}
+                      <div className="flex items-center justify-between">
+                        <div className="font-medium text-foreground">
+                          {submission.full_name}
+                        </div>
+                        {submission.project_type && (
+                          <span className="px-2 py-0.5 text-xs bg-accent/20 text-accent rounded-full">
+                            {projectTypeLabels[submission.project_type]?.label || submission.project_type}
+                          </span>
+                        )}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {submission.email}
                       </div>
+                      {submission.budget && (
+                        <div className="text-sm text-accent font-medium mt-1">
+                          {submission.budget}
+                        </div>
+                      )}
                       <div className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
                         {new Date(submission.submitted_at).toLocaleDateString()}
@@ -325,9 +345,49 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  {/* Section 2: Website Purpose */}
+                  {/* Section 2: Project Type & Budget */}
+                  <div className="p-4 bg-gradient-to-r from-accent/10 to-primary/10 rounded-xl border border-accent/20">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">2. Project Type & Budget</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-xs text-muted-foreground">Project Type</span>
+                        {selectedSubmission.project_type ? (
+                          <div className="flex items-center gap-2 mt-1">
+                            {(() => {
+                              const typeInfo = projectTypeLabels[selectedSubmission.project_type];
+                              const Icon = typeInfo?.icon || FileText;
+                              return (
+                                <>
+                                  <Icon className="w-5 h-5 text-accent" />
+                                  <span className="text-foreground font-medium">{typeInfo?.label || selectedSubmission.project_type}</span>
+                                </>
+                              );
+                            })()}
+                          </div>
+                        ) : (
+                          <p className="text-muted-foreground">N/A</p>
+                        )}
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground">Selected Budget</span>
+                        <p className="text-accent font-bold text-lg">{selectedSubmission.budget || "N/A"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section 3: Project Description */}
+                  <div className="p-4 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl border border-primary/20">
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">3. Project Description (AI Enhanced)</h3>
+                    <div className="p-4 bg-background/50 rounded-lg">
+                      <p className="text-foreground whitespace-pre-wrap leading-relaxed">
+                        {selectedSubmission.project_description || "No description provided"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Section 4: Website Purpose */}
                   <div className="p-4 bg-secondary/30 rounded-xl">
-                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">2. Website Purpose</h3>
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">4. Website Purpose</h3>
                     <div className="space-y-3">
                       <div>
                         <span className="text-xs text-muted-foreground">Selected Purposes</span>
@@ -352,9 +412,9 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  {/* Section 3: Number of Pages */}
+                  {/* Section 5: Number of Pages */}
                   <div className="p-4 bg-secondary/30 rounded-xl">
-                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">3. Number of Pages</h3>
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">5. Number of Pages</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <span className="text-xs text-muted-foreground">Page Count</span>
@@ -367,9 +427,9 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  {/* Section 4: Website Style & Layout */}
+                  {/* Section 6: Website Style & Layout */}
                   <div className="p-4 bg-secondary/30 rounded-xl">
-                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">4. Website Style & Layout</h3>
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">6. Website Style & Layout</h3>
                     <div className="space-y-4">
                       <div>
                         <span className="text-xs text-muted-foreground">Design Styles</span>
@@ -398,9 +458,9 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  {/* Section 5: Color Palette */}
+                  {/* Section 7: Color Palette */}
                   <div className="p-4 bg-secondary/30 rounded-xl">
-                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">5. Color Palette</h3>
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">7. Color Palette</h3>
                     <div className="space-y-4">
                       <div className="flex flex-wrap gap-6">
                         <div>
@@ -444,9 +504,9 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  {/* Section 6: Typography */}
+                  {/* Section 8: Typography */}
                   <div className="p-4 bg-secondary/30 rounded-xl">
-                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">6. Typography</h3>
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">8. Typography</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <span className="text-xs text-muted-foreground">Typography Style</span>
@@ -461,9 +521,9 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  {/* Section 7: Features & Functionalities */}
+                  {/* Section 9: Features & Functionalities */}
                   <div className="p-4 bg-secondary/30 rounded-xl">
-                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">7. Features & Functionalities</h3>
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">9. Features & Functionalities</h3>
                     <div className="space-y-3">
                       <div>
                         <span className="text-xs text-muted-foreground">Selected Features</span>
@@ -488,9 +548,9 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  {/* Section 8: Media & Content */}
+                  {/* Section 10: Media & Content */}
                   <div className="p-4 bg-secondary/30 rounded-xl">
-                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">8. Media & Content</h3>
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">10. Media & Content</h3>
                     <div className="space-y-4">
                       <div>
                         <span className="text-xs text-muted-foreground">Content Provider</span>
@@ -513,9 +573,9 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  {/* Section 9: Project Deadline */}
+                  {/* Section 11: Project Deadline */}
                   <div className="p-4 bg-secondary/30 rounded-xl">
-                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">9. Project Deadline</h3>
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">11. Project Deadline</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <span className="text-xs text-muted-foreground">Deadline</span>
@@ -528,24 +588,15 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  {/* Section 10: Budget Range */}
+                  {/* Section 12: Additional Notes */}
                   <div className="p-4 bg-secondary/30 rounded-xl">
-                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">10. Budget Range</h3>
-                    <div>
-                      <span className="text-xs text-muted-foreground">Budget</span>
-                      <p className="text-foreground text-lg font-medium">{selectedSubmission.budget || "N/A"}</p>
-                    </div>
-                  </div>
-
-                  {/* Section 11: Additional Notes */}
-                  <div className="p-4 bg-secondary/30 rounded-xl">
-                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">11. Additional Notes</h3>
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">12. Additional Notes</h3>
                     <p className="text-foreground whitespace-pre-wrap">{selectedSubmission.additional_notes || "N/A"}</p>
                   </div>
 
-                  {/* Section 12: Client Signature */}
+                  {/* Section 13: Client Signature */}
                   <div className="p-4 bg-secondary/30 rounded-xl">
-                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">12. Client Signature</h3>
+                    <h3 className="font-semibold text-foreground mb-4 text-lg border-b border-border pb-2">13. Client Signature</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <span className="text-xs text-muted-foreground">Signature</span>
