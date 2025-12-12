@@ -38,6 +38,8 @@ export type Database = {
           other_style: string | null
           page_count: string | null
           phone: string | null
+          project_description: string | null
+          project_type: string | null
           secondary_color: string | null
           signature: string | null
           signature_date: string | null
@@ -69,6 +71,8 @@ export type Database = {
           other_style?: string | null
           page_count?: string | null
           phone?: string | null
+          project_description?: string | null
+          project_type?: string | null
           secondary_color?: string | null
           signature?: string | null
           signature_date?: string | null
@@ -100,6 +104,8 @@ export type Database = {
           other_style?: string | null
           page_count?: string | null
           phone?: string | null
+          project_description?: string | null
+          project_type?: string | null
           secondary_color?: string | null
           signature?: string | null
           signature_date?: string | null

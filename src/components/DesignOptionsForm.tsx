@@ -268,6 +268,8 @@ export const DesignOptionsForm = () => {
         business_name: formData.businessName || null,
         email: formData.email,
         phone: formData.phone || null,
+        project_type: formData.projectType || null,
+        project_description: formData.projectDescription || null,
         website_purpose: formData.websitePurpose,
         other_purpose: formData.otherPurpose || null,
         page_count: formData.pageCount || null,
@@ -291,7 +293,7 @@ export const DesignOptionsForm = () => {
         additional_notes: formData.additionalNotes || null,
         signature: formData.signature,
         signature_date: formData.signatureDate,
-      });
+      } as any);
 
       if (error) throw error;
 
