@@ -8,7 +8,8 @@ import { ColorPicker } from "./ColorPicker";
 import { TypographyPreview } from "./TypographyPreview";
 import AIFormAssistant from "./AIFormAssistant";
 import AuthenticIAMascot from "./AuthenticIAMascot";
-import { Send, FileText, Loader2, CheckCircle, Sparkles, Wand2, DollarSign, Smartphone, Globe, Layers } from "lucide-react";
+import { Send, FileText, Loader2, CheckCircle, Sparkles, Wand2, DollarSign, Smartphone, Globe, Layers, Shield } from "lucide-react";
+import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -713,6 +714,20 @@ export const DesignOptionsForm = () => {
           />
         </div>
       </FormSection>
+
+      {/* Terms & Privacy Notice */}
+      <div className="bg-secondary/30 rounded-xl p-4 border border-border text-center">
+        <p className="text-muted-foreground text-sm">
+          By submitting this form, you agree to our{" "}
+          <Link 
+            to="/privacy-policy" 
+            className="text-primary hover:text-primary/80 underline font-medium inline-flex items-center gap-1"
+          >
+            <Shield className="w-3 h-3" />
+            Privacy Policy & Terms of Service
+          </Link>
+        </p>
+      </div>
 
       {/* Submit Button */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
