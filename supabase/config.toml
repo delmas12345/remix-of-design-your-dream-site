@@ -1,7 +1,1 @@
-project_id = "jyvhkpzylpvmjgtjuiag"
-
-[functions.rewrite-description]
-verify_jwt = false
-
-[functions.ai-form-assistant]
-verify_jwt = false
+project_id = "qncxxntvatnxkzaqxvfk"
