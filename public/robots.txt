@@ -1,3 +1,6 @@
+# Robots.txt for Authentic Tech
+# https://authentic-tech.dev
+
 User-agent: Googlebot
 Allow: /
 
@@ -12,3 +15,7 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin
+
+# Sitemap location
+Sitemap: https://authentic-tech.dev/sitemap.xml
