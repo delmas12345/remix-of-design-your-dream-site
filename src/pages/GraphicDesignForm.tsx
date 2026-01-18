@@ -92,8 +92,25 @@ const GraphicDesignForm = () => {
     setIsSubmitting(true);
 
     try {
-      // For now, we'll log the submission - you can add a database table later
-      console.log("Graphic Design Form Submission:", formData);
+      const { error } = await (supabase as any).from("graphic_design_submissions").insert({
+        full_name: formData.fullName,
+        email: formData.email,
+        phone: formData.phone || null,
+        business_name: formData.businessName || null,
+        design_type: formData.designType,
+        other_design_type: formData.otherDesignType || null,
+        color_preferences: formData.colorPreferences || null,
+        style: formData.style || null,
+        dimensions: formData.dimensions || null,
+        deadline: formData.deadline || null,
+        budget: formData.budget || null,
+        project_description: formData.projectDescription || null,
+        reference_links: formData.referenceLinks || null,
+        additional_notes: formData.additionalNotes || null,
+        location: "USA",
+      } as any);
+
+      if (error) throw error;
       
       toast.success("Your request has been submitted! We'll contact you soon.");
       
